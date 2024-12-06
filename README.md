@@ -24,6 +24,54 @@ The system is particularly useful for e-commerce applications where products can
     - Contains the SKU code
     - Maps option fields to their selected values
 
+## Class Diagram
+
+```mermaid
+classDiagram
+    class Product {
+        -Long id
+        -String productCode
+        -boolean isPrimary
+        -ProductOption productOption
+    }
+
+    class ProductOption {
+        -List~OptionField~ optionFields
+        -List~OptionSetting~ optionSettings
+        +generateOptionSettings()
+    }
+
+    class OptionField {
+        -Long pid
+        -String name
+        -int order
+        -List~OptionValue~ values
+    }
+
+    class OptionValue {
+        -Long sid
+        -String name
+        -int order
+    }
+
+    class OptionSetting {
+        -String skuCode
+        -List~OptionFieldValue~ fields
+    }
+
+    class OptionFieldValue {
+        -Long pid
+        -Long sid
+    }
+
+    Product "1" *-- "1" ProductOption : has
+    ProductOption "1" *-- "*" OptionField : contains
+    ProductOption "1" *-- "*" OptionSetting : contains
+    OptionField "1" *-- "*" OptionValue : has
+    OptionSetting "1" *-- "*" OptionFieldValue : contains
+
+```
+
 ## Example Structure
 
 ```json
