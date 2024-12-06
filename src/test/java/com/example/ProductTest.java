@@ -90,7 +90,7 @@ class ProductTest {
 
         
         // Generate option settings
-        product.generateOptionSettings();
+        product.getProductOption().generateOptionSettings(product.getProductCode());
 
         // Verify the settings were generated
         List<OptionSetting> settings = product.getProductOption().getOptionSettings();
@@ -220,7 +220,7 @@ class ProductTest {
 
         
         // Generate option settings
-        product.generateOptionSettings();
+        product.getProductOption().generateOptionSettings(product.getProductCode());
 
         // print the product option tree
         System.out.println("\nPrinting T-shirt product option tree:");
