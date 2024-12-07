@@ -217,22 +217,71 @@ Product Option Tree:
 └── TSHIRT-001-100-101-200-201: 100: 101, 200: 201
 ```
 
-## Dependencies
+# Product Option System V2
 
-- Java 11
-- Lombok for reducing boilerplate code
-- Gson for JSON serialization
-- JUnit Jupiter for testing
+This is a new implementation of the product option system using the Composite Pattern and Builder Pattern.
 
-## Getting Started
+## Design Patterns Used
+1. Composite Pattern - For handling option hierarchies
+2. Builder Pattern - For fluent product variant creation
 
-1. Clone the repository
-2. Ensure you have Java 11 installed
-3. Build the project using Maven:
-   ```bash
-   mvn clean install
-   ```
-4. Run the tests to see the option system in action:
-   ```bash
-   mvn test
-   ```
+## Main Components
+- ProductVariant: Main product class with variant support
+- VariantOption: Base class for all option types
+- VariantOptionGroup: Composite class for option groups
+- VariantOptionValue: Leaf class for concrete option values
+- ProductVariantBuilder: Builder for creating product variants
+
+## Class Diagram
+
+```mermaid
+classDiagram
+    class VariantOption {
+        <<abstract>>
+        -Long id
+        -String name
+        -Integer order
+        +compareTo(VariantOption) int
+    }
+
+    class VariantOptionGroup {
+        -List~VariantOption~ options
+        +addOption(VariantOption)
+        +getSortedOptions() List~VariantOption~
+    }
+
+    class VariantOptionValue {
+        -String value
+        +getValue() String
+    }
+
+    class ProductVariant {
+        -String productCode
+        -String skuCode
+        -List~VariantOptionGroup~ optionGroups
+        +addOptionGroup(VariantOptionGroup)
+        +generateVariantCombinations() List~VariantCombination~
+        -generateCombinationsRecursive(List, int, List)
+    }
+
+    class VariantCombination {
+        -List~VariantOptionValue~ optionValues
+        +generateSkuCode() String
+    }
+
+    class ProductVariantBuilder {
+        -ProductVariant product
+        +withProductCode(String) ProductVariantBuilder
+        +withSkuCode(String) ProductVariantBuilder
+        +withOptionGroup(VariantOptionGroup) ProductVariantBuilder
+        +build() ProductVariant
+    }
+
+    VariantOption <|-- VariantOptionGroup
+    VariantOption <|-- VariantOptionValue
+    VariantOptionGroup o--> "0..*" VariantOption
+    ProductVariant o--> "0..*" VariantOptionGroup
+    ProductVariant ..> VariantCombination
+    VariantCombination o--> "1..*" VariantOptionValue
+    ProductVariantBuilder ..> ProductVariant
+```
