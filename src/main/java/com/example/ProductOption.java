@@ -34,13 +34,15 @@ public class ProductOption {
 
         // Sort option fields by order
         List<OptionField> sortedFields = optionFields.stream()
-                .sorted(Comparator.comparing(OptionField::getOrder))
-                .peek(field -> field.setValues(
-                        field.getValues().stream()
-                                .sorted(Comparator.comparing(OptionValue::getOrder))
-                                .collect(Collectors.toList())
-                ))
-                .collect(Collectors.toList());
+               .map(field -> {
+                List<OptionValue> sortedValues = field.getValues().stream()
+                    .sorted(Comparator.comparing(OptionValue::getOrder))
+                    .collect(Collectors.toList());
+                field.setValues(sortedValues);
+                return field;
+               })
+               .sorted(Comparator.comparing(OptionField::getOrder))
+               .collect(Collectors.toList());
 
         List<OptionSetting> settings = new ArrayList<>();
         generateSettingsCombinations(productCode, sortedFields, 0, new ArrayList<>(), settings);
